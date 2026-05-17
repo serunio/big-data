@@ -1,0 +1,15 @@
+FROM ubuntu:22.04
+
+RUN apt-get update && apt-get install -y \
+    wget openjdk-17-jdk python3
+
+RUN wget https://dlcdn.apache.org/spark/spark-4.1.1/spark-4.1.1-bin-hadoop3.tgz \
+ && tar -xzf spark-*.tgz -C /opt \
+ && mv /opt/spark-* /opt/spark
+
+ENV SPARK_HOME=/opt/spark
+ENV PATH=$PATH:$SPARK_HOME/bin
+ENV HADOOP_USER_NAME=hadoop
+ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+
+CMD ["sleep", "infinity"]

@@ -1,0 +1,70 @@
+version: "3.8"
+
+services:
+
+  spark:
+    build:
+      context: .
+      dockerfile: Dockerfile.spark
+    container_name: spark
+    hostname: spark
+    networks:
+      hadoop_net:
+        ipv4_address: 192.168.8.70
+    volumes:
+      - ./config/core-site.xml:/opt/spark/conf/core-site.xml
+      - ./config/hdfs-site.xml:/opt/spark/conf/hdfs-site.xml
+      - ./jobs:/jobs
+
+  nn:
+    build:
+      context: .
+      dockerfile: Dockerfile.hadoop
+    container_name: nn
+    hostname: nn
+    networks:
+      hadoop_net:
+        ipv4_address: 192.168.8.50
+    volumes:
+      - ./hdfs/nn:/opt/hadoop/namenode
+      - ./files:/home/hadoop/files
+
+  dn1:
+    build:
+      context: .
+      dockerfile: Dockerfile.hadoop
+    container_name: dn1
+    hostname: dn1
+    networks:
+      hadoop_net:
+        ipv4_address: 192.168.8.51
+    volumes:
+      - ./hdfs/dn1:/opt/hadoop/datanode
+
+  dn2:
+    build:
+      context: .
+      dockerfile: Dockerfile.hadoop
+    container_name: dn2
+    hostname: dn2
+    networks:
+      hadoop_net:
+        ipv4_address: 192.168.8.52
+    volumes:
+      - ./hdfs/dn2:/opt/hadoop/datanode
+
+  dn3:
+    build:
+      context: .
+      dockerfile: Dockerfile.hadoop
+    container_name: dn3
+    hostname: dn3
+    networks:
+      hadoop_net:
+        ipv4_address: 192.168.8.53
+    volumes:
+      - ./hdfs/dn3:/opt/hadoop/datanode
+
+networks:
+  hadoop_net:
+    external: true
