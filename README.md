@@ -27,7 +27,14 @@ sudo docker exec -it --user hadoop nn bash
 ### scripts
 
 [crawl_example.py](scripts/crawl_example.py) pobiera z api Wikipedii stronę o jednej z ras i zapisuje jej tekst w hdfs.  
-Wywołujemy z nn.
+Wywołujemy z hosta:
+```
+sudo docker exec -it spark python3 /scripts/script.py
+```
+lub
+```
+./script.sh script.py
+```
 
 ### spark jobs
 
