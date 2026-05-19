@@ -49,5 +49,5 @@ Wyniki na namenode:
 ```
 hdfs dfs -ls /output
 ```
-[nlp_example.py](jobs/nlp_example.py) zawiera prostą przykładową analizę nlp. Wyciąda z tekstu pary przymiotnik-rzeczownik (potencjalny opis rasy) orza nazwy krajów/miast (potencjalne pochodzenie)
+[nlp_example.py](jobs/nlp_example.py) zawiera prostą przykładową analizę nlp. Wyciąda z tekstu pary przymiotnik-rzeczownik (potencjalny opis rasy) oraz nazwy krajów/miast (potencjalne pochodzenie)
 
