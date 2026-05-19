@@ -32,7 +32,7 @@
 </property>
 <property>
  <name>yarn.resourcemanager.webapp.address</name>
- <value>192.168.8.50:8088</value>
+ <value>nn:8088</value>
 </property>
 
 </configuration>
