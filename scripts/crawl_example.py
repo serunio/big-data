@@ -1,5 +1,5 @@
-import requests
-from bs4 import BeautifulSoup
+#import requests
+#from bs4 import BeautifulSoup
 from datetime import datetime
 from hdfs import InsecureClient
 import json
