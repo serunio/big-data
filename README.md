@@ -3,12 +3,12 @@
 ### Build
 
 ```
-./build.sh
+./start.sh
 ```
 
 Tworzy dzielone woluminy i uruchamia compose. żadnego pierdolenia się z macvlanem. Do tego na nn uruchamia dfs i yarna.
 
-start.sh podnosi kontener aby go nie przebudowywać, stop.sh je kładzie.
+stop.sh je kładzie.
 
 ### Wejście do namenode
 
