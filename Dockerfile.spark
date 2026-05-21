@@ -6,7 +6,7 @@ RUN apt-get update && apt-get install -y \
 RUN pip3 install spacy wikipedia-api hdfs psycopg2-binary \
     && python3 -m spacy download en_core_web_sm
 
-RUN wget https://dlcdn.apache.org/spark/spark-4.1.1/spark-4.1.1-bin-hadoop3.tgz \
+RUN wget https://dlcdn.apache.org/spark/spark-4.1.2/spark-4.1.2-bin-hadoop3.tgz \
     && tar -xzf spark-*.tgz -C /opt \
     && mv /opt/spark-* /opt/spark
 

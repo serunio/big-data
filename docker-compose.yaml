@@ -13,6 +13,13 @@ services:
     networks:
       - hadoop_net
 
+  splash:
+    image: scrapinghub/splash
+    ports:
+      - "8050:8050"
+    networks:
+      - hadoop_net
+
   spark:
     build:
       context: .
