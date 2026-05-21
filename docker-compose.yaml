@@ -1,8 +1,9 @@
 services:
 
   scrapper:
-    build: ./scrapper
-    dockerfile: Dockerfile.scrapper
+    build:
+      context: ./scrapper
+      dockerfile: Dockerfile.scrapper
     container_name: scrapper
     volumes:
       - ./scrapper/app:/app
