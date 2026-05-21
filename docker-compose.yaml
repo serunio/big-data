@@ -1,5 +1,18 @@
 services:
 
+  scrapper:
+    build:
+      context: ./scrapper
+      dockerfile: Dockerfile.scrapper
+    container_name: scrapper
+    volumes:
+      - ./scrapper/app:/app
+    environment:
+      - WEBHDFS_URL=http://nn:9870
+      - HDFS_USER=hadoop
+    networks:
+      - hadoop_net
+
   spark:
     build:
       context: .
@@ -68,6 +81,25 @@ services:
     volumes:
       - ./hdfs/dn3:/opt/hadoop/datanode
 
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    hostname: postgres
+    networks:
+      - hadoop_net
+    environment:
+      POSTGRES_DB: cats_knowledge
+      POSTGRES_USER: cats
+      POSTGRES_PASSWORD: cats
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+
 networks:
   hadoop_net:
     driver: bridge
+
+volumes:
+  postgres_data:
