@@ -16,8 +16,6 @@ services:
     ports:
       - "4040:4040"
       - "8080:8080"
-    environment:
-      - CAT_API_KEY=${CAT_API_KEY}
 
   nn:
     build:
@@ -68,6 +66,25 @@ services:
     volumes:
       - ./hdfs/dn3:/opt/hadoop/datanode
 
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    hostname: postgres
+    networks:
+      - hadoop_net
+    environment:
+      POSTGRES_DB: cats_knowledge
+      POSTGRES_USER: cats
+      POSTGRES_PASSWORD: cats
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+
 networks:
   hadoop_net:
     driver: bridge
+
+volumes:
+  postgres_data:
