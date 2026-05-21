@@ -1,5 +1,20 @@
 services:
 
+  scrapper:
+    build: ./scrapper
+    dockerfile: Dockerfile.scrapper
+    container_name: scrapper
+    volumes:
+      - ./scrapper/app:/app
+    environment:
+      - WEBHDFS_URL=http://nn:9870
+      - HDFS_USER=hadoop
+      #- REDDIT_CLIENT_ID=${REDDIT_CLIENT_ID}
+      #- REDDIT_CLIENT_SECRET=${REDDIT_CLIENT_SECRET}
+      #- PUBMED_EMAIL=${PUBMED_EMAIL}
+    networks:
+      - hadoop_net
+
   spark:
     build:
       context: .
