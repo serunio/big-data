@@ -16,6 +16,8 @@ services:
     ports:
       - "4040:4040"
       - "8080:8080"
+    environment:
+      - CAT_API_KEY=${CAT_API_KEY}
 
   nn:
     build:
