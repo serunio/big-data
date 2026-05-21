@@ -7,6 +7,6 @@ df = spark.read.json("hdfs:///raw/cat-api/breeds.json")
 
 df2 = df.select(explode("payload").alias("breed"))
 
-df2.select("breed.*").write.mode("override").parquet("hdfs:///processed/cat-api/breeds")
+df2.select("breed.*").write.mode("overwrite").parquet("hdfs:///processed/cat-api/breeds")
 
 spark.stop()
