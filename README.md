@@ -69,6 +69,8 @@ Wikipedia:
 
 petmd: choroby i rasy
 
+ŻEBY DZIAŁAŁ TRZEBA ODKOMENTOWAĆ CO CHCEMY SCRAPEOWAĆ ZE SKRYPTU
+
 ```
 sudo docker exec -it --user scrapper scrapper scrape.sh
 ```
