@@ -43,7 +43,6 @@ services:
       - hadoop_net
     volumes:
       - ./hdfs/nn:/opt/hadoop/namenode
-      - ./files:/home/hadoop/files
     ports:
       - "9870:9870"
       - "9000:9000"
