@@ -82,3 +82,15 @@ można pogrzebać w ustawieniach scrapy zmniejszyć opóźnienie trochę
 ```
 sudo docker exec -it --user hadoop nn bash
 ```
+lub
+```
+./hdfs.sh
+```
+## przeszukiwanie hdfs
+```
+hfind <fraza>
+```
+odpowiednik:
+```
+hdfs dfs -ls -R / | grep <fraza> | less
+```
