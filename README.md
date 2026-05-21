@@ -28,10 +28,13 @@ sudo docker exec -it --user hadoop nn bash
 
 [crawl_example.py](scripts/crawl_example.py) pobiera z api Wikipedii stronę o jednej z ras i zapisuje jej tekst w hdfs.  
 Wywołujemy z hosta:
+
 ```
 sudo docker exec -it spark python3 /scripts/script.py
 ```
+
 lub
+
 ```
 ./script.sh script.py
 ```
@@ -58,3 +61,22 @@ hdfs dfs -ls /output
 ```
 
 [nlp_example.py](jobs/nlp_example.py) zawiera prostą przykładową analizę nlp. Wyciąda z tekstu pary przymiotnik-rzeczownik (potencjalny opis rasy) oraz nazwy krajów/miast (potencjalne pochodzenie)
+
+# scrapeowanie
+
+Wikipedia:
+~1200 artykułów
+
+petmd: choroby i rasy
+
+```
+sudo docker exec -it --user scrapper scrapper scrape.sh
+```
+
+można pogrzebać w ustawieniach scrapy zmniejszyć opóźnienie trochę
+
+# hdfs
+
+```
+sudo docker exec -it --user hadoop nn bash
+```
