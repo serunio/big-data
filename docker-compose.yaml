@@ -10,6 +10,8 @@ services:
     environment:
       - WEBHDFS_URL=http://nn:9870
       - HDFS_USER=hadoop
+      - CAT_API_KEY=${CAT_API_KEY}
+      - NLM_API_KEY=${NLM_API_KEY}
     networks:
       - hadoop_net
 
@@ -29,8 +31,7 @@ services:
     ports:
       - "4040:4040"
       - "8080:8080"
-    environment:
-      - CAT_API_KEY=${CAT_API_KEY}
+      
 
   nn:
     build:
