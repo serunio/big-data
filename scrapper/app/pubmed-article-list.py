@@ -20,12 +20,12 @@ for row in rows:
         if name.strip() == "":
             continue
         link_name = name.replace(" ", "+").lower()
-        url = f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term={link_name}&api_key={nlp_apikey}"
+        url = f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term={link_name}+AND+cat&retmax=9999&api_key={nlp_apikey}"
         r = requests.get(url)
 
         try:
             r.raise_for_status()
-            with client.write(f"/raw/pubmed/article_list/{names[0]}/{link_name}.xml", encoding="utf-8") as w:
+            with client.write(f"/raw/pubmed/article_list/{names[0]}/{link_name}.xml", overwrite=True, encoding="utf-8") as w:
                 w.write(r.text)
         except requests.RequestException as e:
             print(f"Error fetching data for {name}: {e}")
