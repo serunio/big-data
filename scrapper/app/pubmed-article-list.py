@@ -1,7 +1,10 @@
+import json
+
 from hdfs import InsecureClient
 import requests
 import xml.etree.ElementTree as ET
 import os
+from datetime import datetime
 
 client = InsecureClient("http://nn:9870", user="hadoop")
 
@@ -25,8 +28,14 @@ for row in rows:
 
         try:
             r.raise_for_status()
-            with client.write(f"/raw/pubmed/article_list/{names[0]}/{link_name}.xml", overwrite=True, encoding="utf-8") as w:
-                w.write(r.text)
+            record = {
+                "url": url,
+                "fetched_at": datetime.now().isoformat(),
+                "content_type": "xml",
+                "payload": r.text
+            }
+            with client.write(f"/raw/pubmed/article_list/{names[0]}/{link_name}.json", overwrite=True, encoding="utf-8") as w:
+                w.write(json.dumps(record))
         except requests.RequestException as e:
             print(f"Error fetching data for {name}: {e}")
             print(url)
