@@ -1,4 +1,18 @@
 scripts = {
+
+    "load-candidate-facts": {
+        "inputs": [
+            {
+                "location": "/processed/cats/final_extracted_knowledge",
+                "script": "nlp"
+            }
+        ],
+        "output": None,
+        "file": "load-candidate-facts.py",  
+        "script-type": "spark",
+        "needed-by": []
+    },
+
     "nlp": {
         "inputs": [
             {
@@ -111,7 +125,7 @@ def run(job_name):
         sys.exit(1)
 
     job = scripts[job_name]
-    
+
     # check inputs
     for inp in job["inputs"]:
         if not exists(inp["location"]):
