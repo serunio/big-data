@@ -106,8 +106,12 @@ def exists(path):
 
 
 def run(job_name):
-    job = scripts[job_name]
+    if job_name not in scripts:
+        print(f"Job '{job_name}' does not exist. (Drop the .py extension when running)")
+        sys.exit(1)
 
+    job = scripts[job_name]
+    
     # check inputs
     for inp in job["inputs"]:
         if not exists(inp["location"]):
