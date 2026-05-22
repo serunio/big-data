@@ -1,0 +1,1 @@
+insert into source_weights (source, weight) values ('wikipedia', 0.7);
