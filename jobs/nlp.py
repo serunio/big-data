@@ -1,10 +1,13 @@
 import sys
+import re
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import udf, col, input_file_name
 from pyspark.sql.types import ArrayType, StringType
 
 BREED_DICTIONARY_PATH = "/processed/cat-api/breed-names.txt"
 WIKIPEDIA_INPUT_PATH = "/raw/wikipedia/cat_articles/*.json"
+PETMD_CONDITIONS_PATH = "/raw/petmd/conditions/*.json"
+PETMD_BREEDS_PATH     = "/raw/petmd/breeds/*.json"
 OUTPUT_PATH = "/processed/cats/final_extracted_knowledge"
 
 _nlp_model = None
@@ -37,7 +40,12 @@ def init_nlp_pipeline(local_patterns):
 def extract_knowledge(text):
     if not text or not isinstance(text, str):
         return []
-
+        
+    if bool(re.search(r'<[^>]+>', text)):
+        from bs4 import BeautifulSoup
+        soup = BeautifulSoup(text, "html.parser")
+        text = soup.get_text(separator=" ")
+        
     global _nlp_model
 
     if _nlp_model is None:
@@ -107,13 +115,18 @@ def main():
 
     extract_knowledge_udf = udf(extract_knowledge, ArrayType(StringType()))
 
-    hdfs_input_path = f"hdfs://{WIKIPEDIA_INPUT_PATH}"
-    print(f"Wczytywanie danych z HDFS: {hdfs_input_path}")
+    paths_to_load = [
+        f"hdfs://{WIKIPEDIA_INPUT_PATH}",
+        f"hdfs://{PETMD_CONDITIONS_PATH}",
+        f"hdfs://{PETMD_BREEDS_PATH}"
+    ]
+
+    print(f"Wczytywanie danych z HDFS")
 
     try:
-        df_raw = spark.read.option("multiline", "true").json(hdfs_input_path)
+        df_raw = spark.read.option("multiline", "true").json(paths_to_load)
     except Exception as e:
-        print(f"BLAD: Brak plikow pod sciezka {hdfs_input_path}.")
+        print(f"BLAD: Brak plikow.")
         spark.stop()
         sys.exit(1)
 
