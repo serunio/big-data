@@ -111,6 +111,22 @@ services:
     depends_on:
       - postgres
 
+  streamlit:
+    image: python:3.11-slim
+    container_name: streamlit
+    working_dir: /app
+    volumes:
+      - ./search_app:/app
+    ports:
+      - "8501:8501"
+    networks:
+      - hadoop_net
+    command: >
+      bash -c "pip install streamlit psycopg2-binary pandas &&
+                python3 -m streamlit run app.py --server.address=0.0.0.0"
+    depends_on:
+      - postgres
+
 networks:
   hadoop_net:
     driver: bridge
