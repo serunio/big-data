@@ -21,5 +21,10 @@ CREATE TABLE IF NOT EXISTS final_facts (  --output po czyszczeniu i agregacji
     sources_count INTEGER NOT NULL,   --w ilu źródłach  
     source_list TEXT,                 --lista źródeł zawierających fakt
     final_score DOUBLE PRECISION,     --końcowy wskaźnik wiarygodności wyliczany na podstawie źródeł i ich wag
+    search_vector tsvector,           --wektor do pełnotekstowego wyszukiwania
     UNIQUE (breed, fact_type, fact_value)
 );
+
+CREATE INDEX idx_final_facts_search
+ON final_facts
+USING GIN(search_vector);

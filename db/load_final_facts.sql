@@ -5,7 +5,8 @@ INSERT INTO final_facts (
     mentions_count,
     sources_count,
     source_list,
-    final_score
+    final_score,
+    search_vector
 )
 WITH base AS (
     SELECT
@@ -50,5 +51,11 @@ SELECT
     mentions_count,
     sources_count,
     source_list,
-    final_score
+    final_score,
+    to_tsvector('simple',
+        coalesce(breed,'') || ' ' ||
+        coalesce(fact_type,'') || ' ' ||
+        coalesce(fact_value,'') || ' ' ||
+        coalesce(source_list,'')
+    ) AS search_vector
 FROM final;
