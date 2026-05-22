@@ -9,7 +9,7 @@ from hdfs import InsecureClient
 WIKI_CATEGORY = "Category:WikiProject Cats articles"
 HDFS_WEBHDFS_URL = "http://nn:9870"   
 HDFS_USER = "hadoop"                         
-HDFS_BASE_DIR = "/data/raw/wikipedia/cat_articles"       
+HDFS_BASE_DIR = "/raw/wikipedia/cat_articles"       
 REQUEST_DELAY = 0.01                       
 
 logging.basicConfig(
