@@ -4,7 +4,7 @@ from pyspark.sql.functions import udf, col, input_file_name
 from pyspark.sql.types import ArrayType, StringType
 
 BREED_DICTIONARY_PATH = "/processed/cat-api/breed-names.txt"
-WIKIPEDIA_INPUT_PATH = "/data/raw/wikipedia/cat_articles/*.json"
+WIKIPEDIA_INPUT_PATH = "/raw/wikipedia/cat_articles/*.json"
 OUTPUT_PATH = "/processed/cats/final_extracted_knowledge"
 
 _nlp_model = None

@@ -4,4 +4,4 @@ if [ $# -ne 1 ]; then
   exit 1
 fi
 
-sudo docker exec -it spark spark-submit /jobs/"$1"
+sudo docker exec -it spark python3 /jobs/job-runner.py "$1"
