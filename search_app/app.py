@@ -17,19 +17,18 @@ query = st.text_input("Search facts")
 if query:
     cur = conn.cursor()
     cur.execute("""
-        SELECT breed, fact_type, fact_value, source_list, final_score,
-            ts_rank(search_vector, query) AS rank
+        SELECT breed, fact_type, fact_value, source_list, final_score
         FROM final_facts,
             to_tsquery('simple', %s) query
         WHERE search_vector @@ query
-        ORDER BY rank DESC, final_score DESC;
+        ORDER BY ts_rank(search_vector, query) DESC, final_score DESC;
     """, (query.replace(" ", " & "),))
 
     rows = cur.fetchall()
 
     
     df = pd.DataFrame(rows, columns=[
-        "breed", "fact_type", "fact_value", "sources", "final_score", "rank"
+        "breed", "fact_type", "fact_value", "sources", "final_score"
     ])
 
     st.dataframe(df, use_container_width=True)
