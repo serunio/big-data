@@ -48,17 +48,13 @@ Potem z hosta:
 sudo docker exec -it spark spark-submit /jobs/job.py
 ```
 
-lub
+### JOB-RUNNER
 
 ```
-./spark.sh job.py
+./spark.sh job
 ```
+najlepiej dodawać wszystkie joby do [job-runnera](jobs/job-runner.py) z informacją jakich inputów potrzebuje i które skrypty te inputy generują
 
-Wyniki na namenode:
-
-```
-hdfs dfs -ls /output
-```
 
 [nlp_example.py](jobs/nlp_example.py) zawiera prostą przykładową analizę nlp. Wyciąda z tekstu pary przymiotnik-rzeczownik (potencjalny opis rasy) oraz nazwy krajów/miast (potencjalne pochodzenie)
 
