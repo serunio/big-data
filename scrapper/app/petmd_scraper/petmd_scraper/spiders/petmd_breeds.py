@@ -36,7 +36,7 @@ class PetmdBreedsSpider(scrapy.Spider):
 
     def parse_breed(self, response):
         filename = response.url.rstrip('/').split('/')[-1] + '.html'
-        hdfs_path = f'/raw/data/petmd/breeds/{filename}'
+        hdfs_path = f'/raw/petmd/breeds/{filename}'
 
         self._ensure_directory(hdfs_path)
 
