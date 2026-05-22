@@ -1,6 +1,7 @@
 import scrapy
 import json
 import os
+import time
 from hdfs import InsecureClient
 
 class PetmdConditionsSpider(scrapy.Spider):
@@ -43,13 +44,24 @@ class PetmdConditionsSpider(scrapy.Spider):
 
         self._ensure_directory(hdfs_path)
 
-        with self.hdfs_client.write(hdfs_path, overwrite=True) as writer:
-            writer.write(response.text.encode('utf-8'))
+        title = response.css('h1::text').get()
+        if not title:
+            title = response.url.split('/')[-1].replace('-', ' ').title()
 
-        self.logger.info(f"Saved {response.url} to {hdfs_path}")
+        metadata = {
+            "title": title,
+            "content": response.text,      
+            "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
+            "url": response.url
+        }        
+
+        with self.hdfs_client.write(hdfs_path, overwrite=True) as writer:
+            writer.write(json.dumps(metadata, indent=2).encode('utf-8'))
+
+        self.logger.info(f"Zapisano stronę {response.url} do {hdfs_path}")
 
         yield {
             'url': response.url,
             'hdfs_path': hdfs_path,
-            'condition_name': response.css('h1::text').get(),
+            'condition_name': title,
         }

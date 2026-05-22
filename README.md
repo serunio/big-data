@@ -53,8 +53,8 @@ sudo docker exec -it spark spark-submit /jobs/job.py
 ```
 ./spark.sh job
 ```
-najlepiej dodawać wszystkie joby do [job-runnera](jobs/job-runner.py) z informacją jakich inputów potrzebuje i które skrypty te inputy generują
 
+najlepiej dodawać wszystkie joby do [job-runnera](jobs/job-runner.py) z informacją jakich inputów potrzebuje i które skrypty te inputy generują
 
 [nlp_example.py](jobs/nlp_example.py) zawiera prostą przykładową analizę nlp. Wyciąda z tekstu pary przymiotnik-rzeczownik (potencjalny opis rasy) oraz nazwy krajów/miast (potencjalne pochodzenie)
 
@@ -68,8 +68,10 @@ petmd: choroby i rasy
 ŻEBY DZIAŁAŁ TRZEBA ODKOMENTOWAĆ CO CHCEMY SCRAPEOWAĆ ZE SKRYPTU
 
 ```
-sudo docker exec -it --user scrapper scrapper scrape.sh
+sudo docker exec -it --user scrapper scrapper ./scrape.sh
 ```
+
+albo /app/scrape.sh jak komuś nie działa
 
 można pogrzebać w ustawieniach scrapy zmniejszyć opóźnienie trochę
 
@@ -78,15 +80,21 @@ można pogrzebać w ustawieniach scrapy zmniejszyć opóźnienie trochę
 ```
 sudo docker exec -it --user hadoop nn bash
 ```
+
 lub
+
 ```
 ./hdfs.sh
 ```
+
 ## przeszukiwanie hdfs
+
 ```
 hfind <fraza>
 ```
+
 odpowiednik:
+
 ```
 hdfs dfs -ls -R / | grep <fraza> | less
 ```
