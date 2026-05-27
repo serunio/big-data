@@ -1,20 +1,4 @@
 services:
-
-  scrapper:
-    build:
-      context: ./scrapper
-      dockerfile: Dockerfile.scrapper
-    container_name: scrapper
-    volumes:
-      - ./scrapper/app:/app
-    environment:
-      - WEBHDFS_URL=http://nn:9870
-      - HDFS_USER=hadoop
-      - CAT_API_KEY=${CAT_API_KEY}
-      - NLM_API_KEY=${NLM_API_KEY}
-    networks:
-      - hadoop_net
-
   spark:
     build:
       context: .
@@ -27,12 +11,16 @@ services:
       - ./config/core-site.xml:/opt/spark/conf/core-site.xml
       - ./config/hdfs-site.xml:/opt/spark/conf/hdfs-site.xml
       - ./jobs:/jobs
-      - ./scripts:/scripts
+      - ./scraper:/scraper
+    environment:
+    - WEBHDFS_URL=http://nn:9870
+    - HDFS_USER=hadoop
+    - CAT_API_KEY=${CAT_API_KEY}
+    - NLM_API_KEY=${NLM_API_KEY}
     ports:
       - "4040:4040"
       - "8080:8080"
       
-
   nn:
     build:
       context: .

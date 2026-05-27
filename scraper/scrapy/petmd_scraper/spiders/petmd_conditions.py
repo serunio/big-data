@@ -39,7 +39,7 @@ class PetmdConditionsSpider(scrapy.Spider):
                 yield response.follow(url, callback=self.parse_condition)
 
     def parse_condition(self, response):
-        filename = response.url.rstrip('/').split('/')[-1] + '.html'
+        filename = response.url.rstrip('/').split('/')[-1] + '.json'
         hdfs_path = f'/raw/petmd/conditions/{filename}'
 
         self._ensure_directory(hdfs_path)

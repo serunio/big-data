@@ -6,7 +6,6 @@ mkdir -p hdfs/dn1
 mkdir -p hdfs/dn2
 mkdir -p hdfs/dn3
 mkdir -p jobs
-mkdir -p scripts
 
 sudo docker compose up -d --build
 
