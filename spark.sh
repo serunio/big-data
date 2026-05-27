@@ -1,6 +1,6 @@
 #!/bin/bash
 if [ $# -ne 1 ]; then
-  echo "Usage: $0 <job.py>"
+  echo "Usage: $0 <job>"
   exit 1
 fi
 
