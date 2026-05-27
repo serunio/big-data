@@ -1,1 +1,4 @@
-insert into source_weights (source, weight) values ('wikipedia', 0.7);
+truncate table source_weights;
+
+insert into source_weights (source, weight) values ('wikipedia', 0.6);
+insert into source_weights (source, weight) values ('petmd', 0.8);

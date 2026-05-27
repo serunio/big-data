@@ -1,3 +1,5 @@
+truncate table final_facts restart identity;
+
 INSERT INTO final_facts (
     breed,
     fact_type,
@@ -39,7 +41,7 @@ final AS (
         SUM(mentions_count) AS mentions_count,
         COUNT(DISTINCT source) AS sources_count,
         STRING_AGG(DISTINCT source, '; ') AS source_list,
-        SUM(weight) * LOG(1 + SUM(mentions_count)) * LOG(1 + COUNT(DISTINCT source)) AS final_score
+        (1 - EXP(SUM(LN(1 - weight)))) * LOG(1 + SUM(mentions_count)) * LOG(1 + COUNT(DISTINCT source)) AS final_score
     FROM aggregated_by_source
     GROUP BY breed, fact_type, fact_value
 )
