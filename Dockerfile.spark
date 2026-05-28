@@ -1,9 +1,16 @@
 FROM ubuntu:22.04
 
-RUN apt-get update && apt-get install -y \
-    wget openjdk-17-jdk python3 python3-pip
+RUN apt-get update && apt-get install -y --no-install-recommends\
+    wget openjdk-17-jdk python3 python3-pip gcc \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN pip3 install spacy wikipedia-api hdfs psycopg2-binary \
+RUN pip install --no-cache-dir \
+    spacy wikipedia-api \
+    hdfs psycopg2-binary \
+    requests beautifulsoup4 \
+    praw biopython scrapy \
+    PyYAML \
+    scrapy-user-agents   \
     && python3 -m spacy download en_core_web_sm
 
 RUN wget https://dlcdn.apache.org/spark/spark-4.1.2/spark-4.1.2-bin-hadoop3.tgz \

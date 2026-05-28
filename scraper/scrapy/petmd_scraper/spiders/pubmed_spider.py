@@ -9,7 +9,7 @@ from hdfs import InsecureClient
 
 
 class PubMedHDFSSpider(scrapy.Spider):
-    name = "pubmed_hdfs"
+    name = "pubmed_spider"
 
     custom_settings = {
         "DOWNLOAD_DELAY": 0.1,        

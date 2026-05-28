@@ -1,0 +1,142 @@
+{
+
+    "load-candidate-facts": {
+        "inputs": [
+            {
+                "location": "/processed/cats/final_extracted_knowledge",
+                "script": "nlp"
+            }
+        ],
+        "output": null,
+        "file": "load-candidate-facts.py",  
+        "script-type": "spark",
+        "needed-by": []
+    },
+
+    "nlp": {
+        "inputs": [
+            {
+                "location": "/raw/wikipedia/cat_articles",
+                "script": "scrape-wikipedia"
+            },
+            {
+                "location": "/processed/cat-api/breed-names.txt",
+                "script": "breed-names"
+            },
+            {
+                "location": "/raw/petmd/breeds",
+                "script": "petmd_breeds"
+            },
+            {
+                "location": "/raw/petmd/conditions",
+                "script": "petmd_conditions"
+            }
+        ],
+        "output": "/processed/cats/final_extracted_knowledge",
+        "file": "nlp.py",
+        "needed-by": ["load-candidate-facts"],
+        "script-type": "spark"
+    },
+
+    "analysis": {
+        "inputs": [], 
+        "output": null,
+        "file": "analysis.py",
+        "script-type": "spark",
+        "needed-by": []
+    },
+
+    "scrape-wikipedia": {
+        "inputs": [],
+        "output": "/raw/wikipedia/cat_articles",
+        "file": "scrape-wikipedia.py",
+        "script-type": "python",
+        "needed-by": ["nlp"]
+    },
+
+    "breed-names": { 
+        "inputs": [
+            {
+                "location": "/processed/cat-api/breeds",
+                "script": "breeds-parquet"
+            }
+        ],
+        "output": "/processed/cat-api/breed-names.txt",
+        "file": "breed-names.py",
+        "script-type": "spark",
+        "needed-by": ["nlp"]
+    },
+
+    "breeds-parquet": {
+        "inputs": [
+            {
+                "location": "/raw/cat-api/breeds.json",
+                "script": "cat-api-breeds"
+            }
+        ],
+        "output": "/processed/cat-api/breeds",
+        "file": "breeds-parquet.py",
+        "script-type": "spark",
+        "needed-by": ["breed-names"]
+    },
+
+    "cat-api-breeds": {
+        "inputs": [],
+        "output": "/raw/cat-api/breeds.json",
+        "file": "cat-api-breeds.py",
+        "script-type": "python",
+        "needed-by": ["breeds-parquet"]
+    },
+
+    "pubmed-breed-popularity": {
+        "inputs": [
+            {
+                "location": "/processed/pubmed/article_list",
+                "script": "pubmed-lists-parquet"
+            }
+        ],
+        "output": "/processed/pubmed/breed_popularity",
+        "file": "pubmed-breed-popularity.py",
+        "script-type": "spark",
+        "needed-by": []
+    },
+
+    "pubmed-lists-parquet": {
+        "inputs": [
+            {
+                "location": "/raw/pubmed/article_list",
+                "script": "pubmed-lists"
+            }
+        ],
+        "output": "/processed/pubmed/article_list",
+        "file": "pubmed-lists-parquet.py",
+        "script-type": "spark",
+        "needed-by": ["pubmed-breed-popularity"]
+    },
+
+    "pubmed-lists": {
+        "inputs": [],
+        "output": "/raw/pubmed/article_list",
+        "file": "pubmed-lists.py",
+        "script-type": "python",
+        "needed-by": ["pubmed-lists-parquet"]
+    },
+
+    "petmd_breeds": {
+        "inputs": [],
+        "output": "/raw/petmd/breeds",
+        "script-type": "scrapy"
+    },
+
+    "petmd_conditions": {
+        "inputs": [],
+        "output": "/raw/petmd/conditions",
+        "script-type": "scrapy"
+    },
+
+    "pubmed_spider": {
+        "inputs": [],
+        "output": "raw/pubmed/articles",
+        "script-type": "scrapy"
+    }
+}
