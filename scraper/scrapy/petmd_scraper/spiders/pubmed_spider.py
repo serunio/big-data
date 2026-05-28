@@ -16,13 +16,16 @@ class PubMedHDFSSpider(scrapy.Spider):
         "AUTOTHROTTLE_ENABLED": True,
         "AUTOTHROTTLE_START_DELAY": 0.1,
         "AUTOTHROTTLE_MAX_DELAY": 1,
-        "USER_AGENT": "Mozilla/5.0 (compatible; PubMedHDFS/1.0; +mailto:dciaszczyk@gmail.com)",
+        "USER_AGENT": "Mozilla/5.0 (compatible; PubMedSpider/1.0; +mailto:dciaszczyk@gmail.com)",
         "RETRY_TIMES": 3,
         "COOKIES_ENABLED": False,
     }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        
+        self.logger.info("=== start of init entered ===")
+
 
         hdfs_url = kwargs.get("hdfs_url", "http://nn:9870")
         hdfs_user = kwargs.get("hdfs_user", "hadoop")
@@ -34,49 +37,89 @@ class PubMedHDFSSpider(scrapy.Spider):
 
         self.input_base = "/raw/pubmed/article_list"
         self.output_base = "/raw/pubmed/articles"
+        
+    def iter_json_files(self, base_path):
+        try:
+            entries = self.client.list(base_path)
+        except Exception as e:
+            self.logger.error("Failed listing %s: %s", base_path, e)
+            return
 
-    def start_requests(self):
-        for status in self.client.walk(self.input_base):
-            dir_path, _, files = status
-            for file_name in files:
-                if not file_name.endswith(".json"):
+        for entry in entries:
+            full_path = str(PurePosixPath(base_path) / entry)
+
+            try:
+                status = self.client.status(full_path)
+            except Exception as e:
+                self.logger.error("Status error %s: %s", full_path, e)
+                continue
+
+            if status["type"] == "DIRECTORY":
+                yield from self.iter_json_files(full_path)
+
+            elif status["type"] == "FILE" and entry.endswith(".json"):
+                yield full_path
+
+    async def start(self):
+        json_files = list(self.iter_json_files(self.input_base))
+
+        self.logger.info("Found %d JSON files", len(json_files))
+
+        for full_path in json_files:
+            breed_group = PurePosixPath(full_path).parent.name
+
+            self.logger.info(
+                "Processing JSON: %s (breed: %s)",
+                full_path,
+                breed_group,
+            )
+
+            try:
+                with self.client.read(full_path, encoding="utf-8") as reader:
+                    record = json.load(reader)
+            except Exception as e:
+                self.logger.error("Read error %s: %s", full_path, e)
+                continue
+
+            xml_payload = record.get("payload")
+
+            if not xml_payload:
+                continue
+
+            try:
+                root = ET.fromstring(xml_payload)
+
+                id_list = root.find(".//IdList")
+
+                if id_list is None:
                     continue
 
-                full_file_path = PurePosixPath(dir_path) / file_name
-                breed_group = PurePosixPath(dir_path).name
+                pmids = [
+                    el.text.strip()
+                    for el in id_list.findall("Id")
+                    if el.text
+                ]
 
-                try:
-                    with self.client.read(str(full_file_path), encoding="utf-8") as reader:
-                        record = json.load(reader)
-                except (json.JSONDecodeError, Exception) as e:
-                    self.logger.error(f"Error reading {full_file_path}: {e}")
-                    continue
+            except ET.ParseError:
+                continue
 
-                xml_payload = record.get("payload")
-                if not xml_payload:
-                    continue
+            for pmid in pmids:
+                url = (
+                    "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/"
+                    f"efetch.fcgi?db=pubmed&id={pmid}"
+                    f"&retmode=xml&api_key={self.api_key}"
+                )
 
-                try:
-                    root = ET.fromstring(xml_payload)
-                    id_list = root.find(".//IdList")
-                    if id_list is None:
-                        continue
-                    pmids = [id_elem.text.strip() for id_elem in id_list.findall("Id") if id_elem.text]
-                except ET.ParseError:
-                    self.logger.error(f"XML parse error in {full_file_path}")
-                    continue
-
-                for pmid in pmids:
-                    url = (
-                        f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?"
-                        f"db=pubmed&id={pmid}&retmode=xml&api_key={self.api_key}"
-                    )
-                    yield scrapy.Request(
-                        url,
-                        callback=self.save_article,
-                        meta={"breed_group": breed_group, "pmid": pmid, "fetch_start": datetime.now().isoformat()},
-                        dont_filter=True,  
-                    )
+                yield scrapy.Request(
+                    url,
+                    callback=self.save_article,
+                    meta={
+                        "breed_group": breed_group,
+                        "pmid": pmid,
+                        "fetch_start": datetime.now().isoformat(),
+                    },
+                    dont_filter=True,
+                )
 
     def save_article(self, response):
         breed_group = response.meta["breed_group"]
@@ -84,7 +127,9 @@ class PubMedHDFSSpider(scrapy.Spider):
         fetch_start = response.meta["fetch_start"]
 
         output_dir = PurePosixPath(self.output_base) / breed_group
-        output_file = output_dir / f"{pmid}.xml"
+        output_file = output_dir / f"{pmid}.json"
+        
+        self.client.makedirs(str(output_dir), permission="755")
 
         record = {
             "url": response.url,
