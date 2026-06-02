@@ -4,7 +4,7 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import udf, col, input_file_name
 from pyspark.sql.types import ArrayType, StringType
 
-BREED_DICTIONARY_PATH = "/processed/cat-api/breed-names.txt"
+BREED_DICTIONARY_PATH = "/processed/cat-api/breed-names.json"
 WIKIPEDIA_INPUT_PATH = "/raw/wikipedia/cat_articles/*.json"
 PETMD_CONDITIONS_PATH = "/raw/petmd/conditions/*.json"
 PETMD_BREEDS_PATH     = "/raw/petmd/breeds/*.json"
@@ -86,7 +86,7 @@ def main():
     print("Ladowanie slownika ras z HDFS")
     patterns = []
     try:
-        df_dict = spark.read.text(f"hdfs://{BREED_DICTIONARY_PATH}")
+        df_dict = spark.read.json(f"hdfs://{BREED_DICTIONARY_PATH}").select("payload")
         lines = [row.value for row in df_dict.collect()]
 
         for line in lines:

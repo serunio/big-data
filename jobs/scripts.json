@@ -20,7 +20,7 @@
                 "script": "scrape-wikipedia"
             },
             {
-                "location": "/processed/cat-api/breed-names.txt",
+                "location": "/processed/cat-api/breed-names.json",
                 "script": "breed-names"
             },
             {
@@ -61,7 +61,7 @@
                 "script": "breeds-parquet"
             }
         ],
-        "output": "/processed/cat-api/breed-names.txt",
+        "output": "/processed/cat-api/breed-names.json",
         "file": "breed-names.py",
         "script-type": "spark",
         "needed-by": ["nlp"]

@@ -1,9 +1,11 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import concat_ws
 from hdfs import InsecureClient
+from datetime import datetime
+import json
 
 INPUT = "/processed/cat-api/breeds/*"
-OUTPUT = "/processed/cat-api/breed-names.txt"
+OUTPUT = "/processed/cat-api/breed-names.json"
     
 client = InsecureClient("http://nn:9870", user="hadoop")
 
@@ -15,8 +17,15 @@ rows = df.select(concat_ws(", ", "name", "alt_names").alias("all_names")).collec
 strings = [row["all_names"] for row in rows]
 result = "\n".join(strings)
 
+record = {
+    "source": INPUT,
+    "generated_at": datetime.now().isoformat(),
+    "content_type": "txt",
+    "payload": result
+    }
 
-with client.write(OUTPUT, encoding="utf-8") as w:
-    w.write(result)
+
+with client.write(OUTPUT, encoding="utf-8", overwrite=True) as w:
+    w.write(json.dumps(record))
 
 spark.stop()
