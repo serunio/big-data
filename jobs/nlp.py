@@ -1,13 +1,14 @@
 import sys
 import re
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import udf, col, input_file_name
+from pyspark.sql.functions import udf, col, input_file_name, coalesce
 from pyspark.sql.types import ArrayType, StringType
 
 BREED_DICTIONARY_PATH = "/processed/cat-api/breed-names.json"
 WIKIPEDIA_INPUT_PATH = "/raw/wikipedia/cat_articles/*.json"
 PETMD_CONDITIONS_PATH = "/raw/petmd/conditions/*.json"
 PETMD_BREEDS_PATH     = "/raw/petmd/breeds/*.json"
+PUBMED_INPUT_PATH     = "/raw/pubmed/articles/*/*.json"
 OUTPUT_PATH = "/processed/cats/final_extracted_knowledge"
 
 _nlp_model = None
@@ -118,7 +119,8 @@ def main():
     paths_to_load = [
         f"hdfs://{WIKIPEDIA_INPUT_PATH}",
         f"hdfs://{PETMD_CONDITIONS_PATH}",
-        f"hdfs://{PETMD_BREEDS_PATH}"
+        f"hdfs://{PETMD_BREEDS_PATH}",
+        f"hdfs://{PUBMED_INPUT_PATH}"
     ]
 
     print(f"Wczytywanie danych z HDFS")
@@ -130,12 +132,19 @@ def main():
         spark.stop()
         sys.exit(1)
 
-    if "content" in df_raw.columns:
+    if "content" in df_raw.columns and "payload" in df_raw.columns:
+        df_unified = df_raw.withColumn("text_to_process", coalesce(col("content"), col("payload")))
+    elif "content" in df_raw.columns:
         df_unified = df_raw.withColumnRenamed("content", "text_to_process")
+    elif "payload" in df_raw.columns:
+        df_unified = df_raw.withColumnRenamed("payload", "text_to_process")
     else:
-        print("BLAD: Brak kolumny 'content' w plikach JSON.")
+        print("BLAD: Brak kolumn 'content' ani 'payload' w plikach wejsciowych.")
         spark.stop()
         sys.exit(1)
+
+    if "title" not in df_raw.columns:
+        df_unified = df_unified.withColumn("title", col("url"))
 
     df_with_meta = df_unified.withColumn("source_file", input_file_name())
 
