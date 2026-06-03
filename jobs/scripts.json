@@ -5,6 +5,10 @@
             {
                 "location": "/processed/cats/final_extracted_knowledge",
                 "script": "nlp"
+            },
+            {
+                "location": "/processed/cats/cat-api_knowledge",
+                "script": "cat-api-facts"
             }
         ],
         "output": null,
