@@ -7,15 +7,18 @@ import os
 from datetime import datetime
 
 OUTPUT = "/raw/pubmed/article_list"
+INPUT = "/processed/cat-api/breed-names.json"
 
 client = InsecureClient("http://nn:9870", user="hadoop")
 
 nlp_apikey = os.getenv("NLM_API_KEY")
 
 rows = []
-with client.read("/processed/cat-api/breed-names.txt", encoding="utf-8") as reader:
+with client.read(INPUT, encoding="utf-8") as reader:
     content = reader.read()
-    rows = content.split("\n")
+    data = json.loads(content)
+    text = data['payload']
+    rows = text.split("\n")
 
 count = len(rows)
 i = 1
