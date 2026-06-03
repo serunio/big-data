@@ -10,10 +10,21 @@ df = spark.read.json("hdfs://" + INPUT).select(explode('payload').alias('breed')
 
 fact_rows = []
 for row in df.collect():
-    character_list_str:str = row['temperament']
-    character_list = character_list_str.split(", ")
-    character_facts = ", CHARACTER:".join(character_list)
-    fact_rows.append(Row(extracted_facts=f'ORIGIN:{row["origin"]}, {character_facts}', source_file='hdfs://nn:9000/raw/cat-api/breeds.json', title=row['name']))
+    facts = []
+    
+    if row["origin"]:
+        facts.append(f"ORIGIN:{row['origin']}")
+        
+    if row['temperament']:
+        character_list = row['temperament'].split(", ")
+        for character in character_list:
+            facts.append(f"CHARACTER:{character.strip()}")
+            
+    fact_rows.append(Row(
+        extracted_facts=facts, 
+        source_file='hdfs://nn:9000/raw/cat-api/breeds.json', 
+        title=row['name']
+    ))
 
 df2 = spark.createDataFrame(fact_rows)
 df2.write.mode('overwrite').json(f"hdfs://{OUTPUT}")
