@@ -3,7 +3,10 @@ from pyspark.sql.types import StructType, StructField, StringType
 import psycopg2
 
 
-INPUT_PATH = "hdfs:///processed/cats/{final_extracted_knowledge,cat-api_knowledge}/*.json"
+INPUT_PATH = [
+    "hdfs:///processed/cats/final_extracted_knowledge/*.json",
+    "hdfs:///processed/cats/cat-api_knowledge/*.json"
+]
 
 DB_CONFIG = {
     "host": "postgres",
