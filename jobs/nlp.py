@@ -1,7 +1,7 @@
 import sys
 import re
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import udf, col, input_file_name, coalesce
+from pyspark.sql.functions import udf, col, input_file_name, coalesce, explode, split
 from pyspark.sql.types import ArrayType, StringType
 
 BREED_DICTIONARY_PATH = "/processed/cat-api/breed-names.json"
@@ -87,10 +87,14 @@ def main():
     print("Ladowanie slownika ras z HDFS")
     patterns = []
     try:
-        df_dict = spark.read.json(f"hdfs://{BREED_DICTIONARY_PATH}").select("payload")
-        lines = [row["payload"] for row in df_dict.collect()]
+        df_lines = (
+            spark.read.json(f"hdfs://{BREED_DICTIONARY_PATH}")
+            .select(explode(split(col("payload"), "\n")).alias("line"))
+            .filter(col("line") != "")
+        )
 
-        for line in lines:
+        for row in df_lines.collect():
+            line = row["line"]
             if not line or not line.strip():
                 continue
             parts = [p.strip() for p in line.split(",")]
