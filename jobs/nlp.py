@@ -112,6 +112,7 @@ def main():
         print(f"Sukces! Wygenerowano {len(patterns)} regul dla spaCy.")
     except Exception as e:
         print(f"BLAD slownika: {e}.")
+        sys.exit(1)
         patterns.append(
             {"label": "BREED", "pattern": [{"LOWER": "maine"}, {"LOWER": "coon"}], "id": "Maine Coon"})
 
