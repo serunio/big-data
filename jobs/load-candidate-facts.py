@@ -3,7 +3,7 @@ from pyspark.sql.types import StructType, StructField, StringType
 import psycopg2
 
 
-INPUT_PATH = "hdfs:///processed/cats/final_extracted_knowledge/*.json"
+INPUT_PATH = "hdfs:///processed/cats/{final_extracted_knowledge,cat-api_knowledge}/*.json"
 
 DB_CONFIG = {
     "host": "postgres",
@@ -25,6 +25,7 @@ def detect_source(hdfs_path: str, explicit_source: str = None) -> str:
     markers = [
         "/data/raw/",
         "/raw/data/",
+        "cat-api/",
         "/raw/"
     ]
 
@@ -34,6 +35,7 @@ def detect_source(hdfs_path: str, explicit_source: str = None) -> str:
             parts = [p for p in after.split("/") if p]
 
             if parts:
+                source_name = parts[0].replace(".json", "")
                 return parts[0].strip().lower()
 
     return "unknown"
