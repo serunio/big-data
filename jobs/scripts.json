@@ -138,5 +138,16 @@
         "inputs": [],
         "output": "raw/pubmed/articles",
         "script-type": "scrapy"
+    },
+
+    "cat-api-facts": {
+        "inputs": [
+            {
+                "location": "/raw/cat-api/breeds.json",
+                "script": "cat-api-breeds"
+            }
+        ],
+        "output": "/processed/cats/cat-api_knowledge",
+        "script-type": "spark" 
     }
 }
