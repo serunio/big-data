@@ -33,7 +33,7 @@
             },
             {
                 "location": "/raw/pubmed/articles",
-                "script": "pubmed-spider"
+                "script": "pubmed_spider"
             }
         ],
         "output": "/processed/cats/final_extracted_knowledge",
@@ -145,7 +145,7 @@
                 "script": "pubmed-lists"
             }
         ],
-        "output": "raw/pubmed/articles",
+        "output": "/raw/pubmed/articles",
         "script-type": "scrapy"
     },
 
