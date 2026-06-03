@@ -88,7 +88,7 @@ def main():
     patterns = []
     try:
         df_dict = spark.read.json(f"hdfs://{BREED_DICTIONARY_PATH}").select("payload")
-        lines = [row.value for row in df_dict.collect()]
+        lines = [row["payload"] for row in df_dict.collect()]
 
         for line in lines:
             if not line or not line.strip():
