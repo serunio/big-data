@@ -12,11 +12,11 @@ class PubMedHDFSSpider(scrapy.Spider):
     name = "pubmed_spider"
 
     custom_settings = {
+        "ROBOTSTXT_OBEY": False,
         "DOWNLOAD_DELAY": 0.1,        
         "AUTOTHROTTLE_ENABLED": True,
         "AUTOTHROTTLE_START_DELAY": 0.1,
         "AUTOTHROTTLE_MAX_DELAY": 1,
-        "USER_AGENT": "Mozilla/5.0 (compatible; PubMedSpider/1.0; +mailto:dciaszczyk@gmail.com)",
         "RETRY_TIMES": 3,
         "COOKIES_ENABLED": False,
     }
