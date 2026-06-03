@@ -30,6 +30,10 @@
             {
                 "location": "/raw/petmd/conditions",
                 "script": "petmd_conditions"
+            },
+            {
+                "location": "/raw/pubmed/articles",
+                "script": "pubmed-spider"
             }
         ],
         "output": "/processed/cats/final_extracted_knowledge",
@@ -135,7 +139,12 @@
     },
 
     "pubmed_spider": {
-        "inputs": [],
+        "inputs": [
+            {
+                "location": "/raw/pubmed/article_list",
+                "script": "pubmed-lists"
+            }
+        ],
         "output": "raw/pubmed/articles",
         "script-type": "scrapy"
     },
