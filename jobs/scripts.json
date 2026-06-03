@@ -157,6 +157,7 @@
             }
         ],
         "output": "/processed/cats/cat-api_knowledge",
-        "script-type": "spark" 
+        "script-type": "spark" ,
+        "file": "cat-api-facts.py"
     }
 }

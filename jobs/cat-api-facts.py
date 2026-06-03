@@ -11,6 +11,9 @@ df = spark.read.json("hdfs://" + INPUT).select(explode('payload').alias('breed')
 fact_rows = []
 for row in df.collect():
     facts = []
+
+    if row["name"]:
+        facts.append(f"BREED:{row['name']}")
     
     if row["origin"]:
         facts.append(f"ORIGIN:{row['origin']}")
