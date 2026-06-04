@@ -26,9 +26,9 @@ def detect_source(hdfs_path: str, explicit_source: str = None) -> str:
     path = hdfs_path.lower()
 
     markers = [
-        "/data/raw/",
-        "/raw/data/",
-        "cat-api/",
+        # "/data/raw/",
+        # "/raw/data/",
+        # "cat-api/",
         "/raw/"
     ]
 
