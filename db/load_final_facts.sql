@@ -41,9 +41,25 @@ final AS (
         SUM(mentions_count) AS mentions_count,
         COUNT(DISTINCT source) AS sources_count,
         STRING_AGG(DISTINCT source, '; ') AS source_list,
-        (1 - EXP(SUM(LN(1 - weight)))) * LOG(1 + SUM(mentions_count)) * LOG(1 + COUNT(DISTINCT source)) AS final_score
+        (
+            0.4 * MAX(weight)
+            + 0.4 * COUNT(DISTINCT source)::float / (SELECT COUNT(*) FROM source_weights)
+            + 0.2 * (
+                1 - 1.0 / (SQRT(SUM(mentions_count)) + 1)
+            )
+        ) AS final_score
     FROM aggregated_by_source
     GROUP BY breed, fact_type, fact_value
+),
+
+ranked AS (
+    SELECT
+        *,
+        ROW_NUMBER() OVER (
+            PARTITION BY breed, fact_type
+            ORDER BY final_score DESC
+        ) AS rn
+    FROM final
 )
 
 SELECT
@@ -54,10 +70,12 @@ SELECT
     sources_count,
     source_list,
     final_score,
-    to_tsvector('simple',
+    to_tsvector(
+        'simple',
         coalesce(breed,'') || ' ' ||
         coalesce(fact_type,'') || ' ' ||
         coalesce(fact_value,'') || ' ' ||
         coalesce(source_list,'')
     ) AS search_vector
-FROM final;
+FROM ranked
+WHERE rn <= 10;
